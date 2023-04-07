@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private Transform target;
     private Ray lastRay;
 
     private void Update() 
@@ -18,12 +17,12 @@ public class PlayerMover : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            MoveToRay();
+            MoveToRayHit();
         }
-        
+        UpdateAnimator();
     }
 
-    private void MoveToRay()
+    private void MoveToRayHit()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit; 
@@ -33,5 +32,13 @@ public class PlayerMover : MonoBehaviour
         {
             GetComponent<NavMeshAgent>().destination = hit.point;
         }
+    }
+
+    private void UpdateAnimator()
+    {
+        Vector3 velocity = GetComponent<NavMeshAgent>().velocity;
+        Vector3 localVelocity = transform.InverseTransformDirection(velocity); //converting global to local units
+        float speed = localVelocity.z;
+        GetComponent<Animator>().SetFloat("forwardSpeed", speed);
     }
 }
